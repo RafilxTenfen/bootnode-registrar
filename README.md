@@ -1,6 +1,6 @@
 # bootnode-registrar
 
-Registrar for [Geth Bootnodes](https://github.com/ethereum/go-ethereum/wiki/Setting-up-private-network-or-local-cluster#setup-bootnode). `bootnode-registrar` will resolve a DNS address record to a enode addresses that can then be consumed by `geth --bootnodes=<enodes>`. 
+Registrar for [Geth Bootnodes](https://github.com/ethereum/go-ethereum/wiki/Setting-up-private-network-or-local-cluster#setup-bootnode). `bootnode-registrar` will resolve a DNS address record to a enode addresses that can then be consumed by `geth --bootnodes=<enodes>`.
 
 ## Pre-requisites
 
@@ -25,14 +25,16 @@ Registrar for [Geth Bootnodes](https://github.com/ethereum/go-ethereum/wiki/Sett
 
 ## Usage
 
+- You can set multiple dns record to resolve separating it with ','
+
 ```
 $ git clone git@github.com:jpoon/bootnode-registrar.git
 $ make
-$ ./bootnode-registrar -service <dns-record-to-resolve>
+$ ./bootnode-registrar -service <dns-record-to-resolve>,<another-dns-record-to-resolve>
 
 -- or --
 
-$ BOOTNODE_SERVIER=<dns-record-to-resolve> && ./bootnode-registrar
+$ BOOTNODE_SERVIER=<dns-record-to-resolve>,<other-dns-record-to-resolve> && ./bootnode-registrar
 ```
 
 or skip all that and run the container
@@ -41,7 +43,7 @@ or skip all that and run the container
 $ docker run jpoon/bootnode-registrar -p 9898:9898
 ```
 
-Once running, a http server 
+Once running, a http server
 
 ```
 $ curl localhost:9898

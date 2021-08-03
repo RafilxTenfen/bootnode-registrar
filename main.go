@@ -24,7 +24,7 @@ var (
 	ethereumNodes string
 )
 
-func updateEthereumNodes(addressRecord string) {
+func updateEthereumNodes(addressRecord []string) {
 	buffer := bytes.NewBufferString("")
 
 	// Resolve DNS A record to a set of IP addresses
@@ -65,7 +65,7 @@ updateNodes:
 	ethereumNodes = buffer.String()
 }
 
-func startPollUpdateEthereumNodes(addressRecord string) {
+func startPollUpdateEthereumNodes(addressRecord []string) {
 	for {
 		go updateEthereumNodes(addressRecord)
 		<-time.After(pollingDuration)
@@ -81,7 +81,7 @@ func webHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	bootNodeService := flag.String("service", os.Getenv("BOOTNODE_SERVICE"), "DNS A Record for `bootnode` services. Alternatively set `BOOTNODE_SERVICE` env.")
+	bootNodeService := flag.String("service", os.Getenv("BOOTNODE_SERVICE"), "Comma separated for multiple DNS A Record for `bootnode` services. Alternatively set `BOOTNODE_SERVICE` env.")
 	flag.Parse()
 
 	if *bootNodeService == "" {
@@ -89,8 +89,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	bootNodeServiceStr := *bootNodeService
+	arrBootNodeServices := strings.Split(bootNodeServiceStr, ",")
+
 	log.Infof("starting bootnode-registrar: %s.", *bootNodeService)
-	go startPollUpdateEthereumNodes(*bootNodeService)
+	go startPollUpdateEthereumNodes(arrBootNodeServices)
 	http.HandleFunc("/", webHandler)
 	log.Fatal(http.ListenAndServe(listeningPort, nil))
 }
