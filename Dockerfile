@@ -1,26 +1,22 @@
-FROM golang:1.9.2-alpine3.6 as gopher
+FROM golang:1.16 as gopher
 
-ENV GOPATH /go
-ENV APPROOT ${GOPATH}/src/github.com/jpoon/bootnode-registrar
+WORKDIR /app
 
-# Package dependencies
-RUN apk add --update --no-cache git gcc libc-dev
+COPY go.mod ./
+COPY go.sum ./
 
-# Install dependency tool
-RUN go get github.com/golang/dep && go install github.com/golang/dep/cmd/dep
+RUN go mod download
 
-# Copy project files
-WORKDIR ${APPROOT}
-COPY . ${APPROOT}
+COPY *.go ./
+COPY Makefile ./
 
-# Get dependencies and compile
-RUN dep ensure
-RUN go build
+RUN make compile
 
 FROM alpine:latest as final
 
-WORKDIR /work
-COPY --from=gopher ["/go/src/github.com/jpoon/bootnode-registrar/bootnode-registrar", "/work/bootnode-registrar"]
+WORKDIR /app
+
+COPY --from=gopher /app/bin/bootnode-registrar-linux-amd64 /app/bootnode-registrar
 
 ENTRYPOINT [ "./bootnode-registrar" ]
 EXPOSE 9898

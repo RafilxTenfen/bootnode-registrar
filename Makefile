@@ -1,32 +1,14 @@
-SHELL := /bin/bash
+build:
+	go build -o bootnode-registrar *.go
 
-# The name of the executable (default is current directory name)
-TARGET := $(shell echo $${PWD\#\#*/})
-.DEFAULT_GOAL: $(TARGET)
+run:
+	go run main.go
 
-# These will be provided to the target
-VERSION := 1.0.0
-BUILD := `git rev-parse HEAD`
+compile:
+	echo "Compiling for every OS and Platform"
+	env GOTRACEBACK=none CGO_ENABLED=0 GOTRACEBACK=none GOOS=linux GOARCH=arm go build -trimpath -ldflags "-w -s" -o bin/bootnode-registrar-linux-arm *.go
+	env GOTRACEBACK=none CGO_ENABLED=0 GOTRACEBACK=none GOOS=linux GOARCH=arm64 go build -trimpath -ldflags "-w -s" -o bin/bootnode-registrar-linux-arm64 *.go
+	env GOTRACEBACK=none CGO_ENABLED=0 GOTRACEBACK=none GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-w -s" -o bin/bootnode-registrar-linux-amd64 *.go
+	env GOTRACEBACK=none CGO_ENABLED=0 GOTRACEBACK=none GOOS=freebsd GOARCH=386 go build -trimpath -ldflags "-w -s" -o bin/bootnode-registrar-freebsd-386 *.go
 
-SRC = $(shell find . -type f -name '*.go' -not -path "./vendor/*")
-
-# Use linker flags to provide version/build settings to the target
-LDFLAGS=-ldflags "-X=main.Version=$(VERSION) -X=main.Build=$(BUILD)"
-
-$(TARGET): $(SRC)
-	@go build $(LDFLAGS) -o $(TARGET)
-
-build: $(TARGET)
-	@true
-
-clean:
-	@rm -f $(TARGET)
-
-install:
-	@go install $(LDFLAGS)
-
-uninstall: clean
-	@rm -f $$(which ${TARGET})
-
-run: install
-	@$(TARGET)
+all: build compile

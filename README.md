@@ -25,7 +25,7 @@ Registrar for [Geth Bootnodes](https://github.com/ethereum/go-ethereum/wiki/Sett
 
 ## Usage
 
-- You can set multiple dns record to resolve separating it with ','
+- You can set multiple dns record to resolve separating it with ',', or using ip addresses
 
 ```
 $ git clone git@github.com:jpoon/bootnode-registrar.git
@@ -34,7 +34,14 @@ $ ./bootnode-registrar -service <dns-record-to-resolve>,<another-dns-record-to-r
 
 -- or --
 
-$ BOOTNODE_SERVIER=<dns-record-to-resolve>,<other-dns-record-to-resolve> && ./bootnode-registrar
+$ ./bootnode-registrar -ips <dns-record-to-resolve>,<another-dns-record-to-resolve>
+
+-- or --
+
+$ BOOTNODE_SERVICE=<ip:port>,<ip> && ./bootnode-registrar
+
+-- or --
+$ BOOTNODE_IPS=<ip:port>,<ip> && ./bootnode-registrar
 ```
 
 or skip all that and run the container
@@ -52,3 +59,8 @@ enode://d61206cab2a77832ccd9a69e734dfe1e4a56fc4228698d696fc3799b0801398219d6e529
 
 ```
 
+#### Using Docker
+- Build the docker image
+```shell
+$~ docker build -t go-registrar .
+```
